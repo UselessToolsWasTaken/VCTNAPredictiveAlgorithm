@@ -76,6 +76,7 @@ The MinMaxing! I'll get to that later but we're using the SVM model to predict s
 0 = Lowest number in the Feature set 
 BUT ONLY FOR THAT SPECIFIC FEATURE (Column)
 
+---
 
 For the next part.I will not go into much detail as it would take hours to write a text about this.
 
@@ -117,3 +118,71 @@ It's basically  helping your ML make a good determination. Important note: Highe
 
 In my examples I had LOUD vs SENTINELS. when the CV was set to 5, the winner was LOUD however on ANY OTHER Amount of folds, 3, 4, 6, 10, 15 even 50(Don't do that it takes literally an hour to compute), SENTINELS won. What does that mean? You can infer that CV = 5 favors LOUDS data but to know which one is correct, you need to apply some of your own brain to it.
 
+After all is done it selects the best parameters to fit the data and give you t he most accurate prediction possible.
+
+---
+
+```Python
+
+for i in range(learn_iterations):
+    # Splitting the data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
+
+    # Scale the features
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+
+    # Train the SVM model
+    best_model.fit(X_train_scaled, y_train)
+
+    # Making predictions on the testing set
+    y_pred = best_model.predict(X_test_scaled)
+
+    # Evaluating the model
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f"Iteration {i + 1}: Model Accuracy: {accuracy}")
+    rounded_accuracy = round(accuracy, 2)
+    writeDataCSV(f"Iteration {i + 1}", rounded_accuracy, statsFile)
+
+```
+
+This is the learning part. I iterate it over a certain amount. I'm not going to go over every line for this, just know that it takes a test sample and learning sample with the split define by ```test_size=0.5``` so it's 50% in my code. It then shits out the accuracy of the whole system in the console.
+Remember not to iterate a few thousand times, unless you have an insanely big dataset. The more times you iterate the higher the chances of Noise being introduce into the system, ultimately breaking it.
+
+---
+
+```Python
+
+def predict_match(team1_stats_param, team2_stats_param):
+    global best_model
+    global data
+
+    team_stats_diff = team1_stats_param - team2_stats_param
+    prediction = best_model.predict([team_stats_diff])
+    print(prediction)
+    if prediction == 1:
+        return f"{team2_name} wins"
+    else:
+        return f"{team1_name} wins"
+
+# Yes, I run 10 predictions. I want to see if it'll shit out some other stuff I didn't expect
+for i in range(num_iterations):
+    # Example usage:
+    team1_name = "LOUD"  # Replace with the name of the first team
+    team2_name = "100T"  # Replace with the name of the second team
+    team1_stats = data[data[0] == team1_name].iloc[:, 1:-1].mean()  # Extract and average the stats for Team 1
+    team2_stats = data[data[0] == team2_name].iloc[:, 1:-1].mean()  # Extract and average the stats for Team 2
+
+    print("The winner is: ", predict_match(team1_stats, team2_stats))
+    rounded_accuracy = round(accuracy, 2)
+
+    writeDataCSV(rounded_accuracy, predict_match(team1_stats, team2_stats),
+                 outcomeFile)  # Appends outcome lines with Accuracy to CSV
+```
+
+These two pieces kinda go hand in hand. Basically ```predict_match``` is the actual comparison. It takes the NAME that you give it, compares it with Column 1 to see if it exists, if yes, then it does the magic and shits out 1 or 0. If prediction is 1, team 2 wins, if not, team 1 wins.
+
+In the above case it's LOUD vs 100T but in ```team_name``` 1 and 2 you just put a string from the CSV.
+
+
+This is it folks. The CSV will be available here as well.
