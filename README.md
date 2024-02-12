@@ -1,6 +1,7 @@
 Current stats of the algorithm (According to metrics I get from in-code calculations)
 
 Accuracy Score: 88%
+
 F1 Score: 0.87
 
 # Anger Management Program
