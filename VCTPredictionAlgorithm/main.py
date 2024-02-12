@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, f1_score
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import GridSearchCV
 import csv
@@ -12,10 +12,10 @@ outcomeFile = "vct_outcome.csv"                     # I'm not entirely sure what
 historicalOutcomeFile = "vct_historical.csv"        # I think I'm going to stick to using one big dataset and then just try and shit out predictions
 
 
-def writeDataCSV(Accuracy, Outcome, fileName):
+def writeDataCSV(Accuracy, Outcome_1, outcome_2, fileName):
     with open('C:\\Users\\evryt\\OneDrive\\Documents\\My Cheat Tables\\' + fileName, 'a', newline='') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow([Accuracy, Outcome])
+        writer.writerow([Accuracy, Outcome_1,outcome_2])
 
 
 # Load the CSV data
@@ -74,9 +74,10 @@ for i in range(learn_iterations):
 
     # Evaluating the model
     accuracy = accuracy_score(y_test, y_pred)
-    print(f"Iteration {i + 1}: Model Accuracy: {accuracy}")
+    f1 = f1_score(y_test, y_pred)
+    print(f"Iteration {i + 1}: Model Accuracy: {accuracy}, F1 Score: {f1}")
     rounded_accuracy = round(accuracy, 2)
-    writeDataCSV(f"Iteration {i + 1}", rounded_accuracy, statsFile)
+    writeDataCSV(f"Iteration {i + 1}", rounded_accuracy, f1, "stats.csv")
 
 
 # Function to predict the outcome of a match between two teams
@@ -103,5 +104,5 @@ for i in range(num_iterations):
     print("The winner is: ", predict_match(team1_stats, team2_stats))
     rounded_accuracy = round(accuracy, 2)
 
-    writeDataCSV(rounded_accuracy, predict_match(team1_stats, team2_stats),
+    writeDataCSV(rounded_accuracy, predict_match(team1_stats, team2_stats), f1,
                  outcomeFile)  # Appends outcome lines with Accuracy to CSV
