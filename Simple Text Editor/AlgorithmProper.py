@@ -7,15 +7,15 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import GridSearchCV
 import csv
 
-statsFile = "vct_stats.csv"                         # I have a bunch of CSV's.
-outcomeFile = "vct_outcome.csv"                     # I'm not entirely sure what to do with them I think the outcome file gets appended with the predictions. I think.
-historicalOutcomeFile = "vct_historical.csv"        # I think I'm going to stick to using one big dataset and then just try and shit out predictions
+statsFile = "vct_stats.csv"  # I have a bunch of CSV's.
+outcomeFile = "vct_outcome.csv"  # I'm not entirely sure what to do with them I think the outcome file gets appended with the predictions. I think.
+historicalOutcomeFile = "vct_historical.csv"  # I think I'm going to stick to using one big dataset and then just try and shit out predictions
 
 
 def writeDataCSV(Accuracy, Outcome_1, outcome_2, fileName):
     with open('C:\\Users\\evryt\\OneDrive\\Documents\\My Cheat Tables\\' + fileName, 'a', newline='') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow([Accuracy, Outcome_1,outcome_2])
+        writer.writerow([Accuracy, Outcome_1, outcome_2])
 
 
 # Load the CSV data
@@ -92,6 +92,7 @@ def predict_match(team1_stats_param, team2_stats_param):
         return f"{team2_name} wins"
     else:
         return f"{team1_name} wins"
+
 
 # Yes, I run 10 predictions. I want to see if it'll shit out some other stuff I didn't expect
 for i in range(num_iterations):
